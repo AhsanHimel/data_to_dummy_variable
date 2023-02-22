@@ -12,9 +12,6 @@
 
 
 DataDummy <- function(var, data, bind = FALSE){
-  # var: single variable or a vector of variables
-  # data: name of the data set
-  # bind: default = FALSE, if True, dummy variables will be added to the original data
   
   if(length(var)==1){
     # if single variable is passed in `var`
@@ -96,3 +93,30 @@ DataDummy <- function(var, data, bind = FALSE){
 # 4 17   Treated Male  32   Marked                0                1            0            0              1
 # 5 36   Treated Male  46   Marked                0                1            0            0              1
 # 6 23   Treated Male  58   Marked                0                1            0            0              1
+
+
+
+
+
+
+# caret's dummyVars() function cannot deal with ordered factors, whereas DataDummy can.
+# > require(caret)
+# > noNames <- dummyVars(~ Treatment + Improved, data = Arthritis, sep = "")
+# > head(predict(noNames, Arthritis))
+# TreatmentPlacebo TreatmentTreated    Improved.L Improved.Q
+# 1                0                1 -7.850462e-17 -0.8164966
+# 2                0                1 -7.071068e-01  0.4082483
+# 3                0                1 -7.071068e-01  0.4082483
+# 4                0                1  7.071068e-01  0.4082483
+# 5                0                1  7.071068e-01  0.4082483
+# 6                0                1  7.071068e-01  0.4082483
+# > Arthritis$Improved <- factor(Arthritis$Improved, ordered = F)
+# > noNames <- dummyVars(~ Treatment + Improved, data = Arthritis, sep = "")
+# > head(predict(noNames, Arthritis))
+# TreatmentPlacebo TreatmentTreated ImprovedNone ImprovedSome ImprovedMarked
+# 1                0                1            0            1              0
+# 2                0                1            1            0              0
+# 3                0                1            1            0              0
+# 4                0                1            0            0              1
+# 5                0                1            0            0              1
+# 6                0                1            0            0              1
